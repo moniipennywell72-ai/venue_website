@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Login &middot; Sandys Louisiana Soul Food Kitchen</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=118">
+</head>
+<body>
+    <main class="owner-auth-page">
+        <div class="owner-card">
+            <h1>Owner Login</h1>
+            <p>Enter the owner password to manage the food gallery.</p>
+            {% if error %}
+                <p class="owner-error">{{ error }}</p>
+            {% endif %}
+            <form method="POST" action="{{ url_for('owner_login') }}" class="owner-form">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required autofocus>
+                <button type="submit">Log In</button>
+            </form>
+            <a class="owner-back-link" href="{{ url_for('home') }}">&larr; Back to website</a>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Gallery &middot; Sandys Louisiana Soul Food Kitchen</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=118">
+</head>
+<body class="gallery-page">
+    <main class="gallery-page-shell">
+        <header class="gallery-header">
+            <h1>Food Gallery</h1>
+            <a href="{{ url_for('home') }}">&larr; Back to Home</a>
+        </header>
+
+        <div class="gallery-grid">
+            {% for image in images %}
+                <div class="gallery-card">
+                    <img src="{{ url_for('uploaded_gallery', filename=image) }}" alt="Food photo: {{ image }}">
+                </div>
+            {% else %}
+                <div class="gallery-empty">
+                    <p>No food photos have been added yet.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+</body>
+</html>

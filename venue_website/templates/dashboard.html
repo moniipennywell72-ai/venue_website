@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Dashboard | Sandys Louisiana Soul Food Kitchen</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+	<style>
+		body { background: #fff; color: #222; font-family: Arial, sans-serif; text-align: left; }
+		main { max-width: 960px; margin: 0 auto; padding: 32px 20px; }
+		.dashboard-header { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+		.dashboard-header h1, .dashboard-header p, .metric h2, .metric p, .orders h2 { color: #222 !important; text-shadow: none; }
+		.dashboard-header h1, .orders h2 { margin: 0; }
+		.metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+		.metric { border: 1px solid #e6e6e6; padding: 16px; }
+		.metric h2 { margin: 0 0 8px; font-size: 1.5rem; }
+		.metric p { margin: 0; }
+		.orders table { width: 100%; border-collapse: collapse; color: #222; }
+		.orders th, .orders td { padding: 12px; text-align: left; }
+		@media (max-width: 700px) {
+			.dashboard-header { display: block; }
+			.metrics { grid-template-columns: repeat(2, 1fr); }
+			.orders { overflow-x: auto; }
+			.orders table { min-width: 600px; }
+		}
+	</style>
+</head>
+<body>
+	<main>
+		<header class="dashboard-header">
+			<h1>Restaurant Dashboard</h1>
+			<a href="{{ url_for('home') }}">View storefront</a>
+		</header>
+
+		<section class="metrics" aria-label="Today's summary">
+			<article class="metric"><h2>{{ data.orders_today }}</h2><p>Orders today</p></article>
+			<article class="metric"><h2>${{ '%.2f'|format(data.sales_today) }}</h2><p>Sales today</p></article>
+			<article class="metric"><h2>{{ data.menu_items }}</h2><p>Menu items</p></article>
+			<article class="metric"><h2>{{ data.pending_orders }}</h2><p>Pending orders</p></article>
+		</section>
+
+		<section class="orders">
+			<h2>Recent orders</h2>
+			<table>
+				<thead>
+					<tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th></tr>
+				</thead>
+				<tbody>
+					{% for order in orders %}
+					<tr>
+						<td>{{ order.id }}</td>
+						<td>{{ order.customer }}</td>
+						<td>${{ '%.2f'|format(order.total) }}</td>
+						<td>{{ order.status }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</section>
+	</main>
+</body>
+</html>

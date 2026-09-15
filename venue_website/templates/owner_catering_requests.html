@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catering Requests &middot; Owner Panel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=118">
+</head>
+<body class="gallery-page">
+    <main class="gallery-page-shell">
+        <header class="gallery-header">
+            <h1>Catering Requests</h1>
+            <div>
+                <a href="{{ url_for('owner_gallery') }}">Gallery</a>
+                <span style="margin: 0 8px; color: rgba(255,255,255,.7);">|</span>
+                <a href="{{ url_for('owner_logout') }}">Log Out</a>
+            </div>
+        </header>
+
+        {% if requests %}
+            <div class="requests-list">
+                {% for request in requests %}
+                    <article class="request-card">
+                        <h3>{{ request.name }}</h3>
+                        <p><strong>Phone:</strong> {{ request.phone }}</p>
+                        <p><strong>Email:</strong> {{ request.email }}</p>
+                        <p><strong>Event date:</strong> {{ request.event_date }}</p>
+                        <p><strong>Guest count:</strong> {{ request.guest_count }}</p>
+                        <p><strong>Event type:</strong> {{ request.event_type }}</p>
+                        {% if request.budget %}
+                            <p><strong>Budget:</strong> {{ request.budget }}</p>
+                        {% endif %}
+                        <p><strong>Submitted:</strong> {{ request.submitted_at }}</p>
+                        <div class="request-details">
+                            <strong>Details:</strong>
+                            <p>{{ request.details }}</p>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="gallery-empty">
+                <p>No catering requests yet.</p>
+            </div>
+        {% endif %}
+    </main>
+</body>
+</html>

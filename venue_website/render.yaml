@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: sandys-bayou-kitchen
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.4"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: OWNER_PASSWORD
+        sync: false
+      - key: PORT
+        value: "10000"
+      - key: DATA_DIR
+        value: "/tmp/sandys-data"
+      - key: GALLERY_FOLDER
+        value: "/tmp/sandys-data/gallery"
+      - key: CATERING_REQUESTS_FILE
+        value: "/tmp/sandys-data/catering_requests.json"

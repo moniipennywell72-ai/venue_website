@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Gallery &middot; Sandys Louisiana Soul Food Kitchen</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=118">
+</head>
+<body>
+    <main class="owner-auth-page">
+        <div class="owner-card owner-card-wide">
+            <div class="owner-card-header">
+                <h1>Food Gallery &mdash; Owner Panel</h1>
+                <a class="owner-back-link" href="{{ url_for('owner_logout') }}">Log Out</a>
+            </div>
+            <p>Upload photos of your dishes to show off on the public gallery page.</p>
+
+            {% if error %}
+                <p class="owner-error">{{ error }}</p>
+            {% endif %}
+
+            <form method="POST" action="{{ url_for('owner_gallery') }}" enctype="multipart/form-data" class="owner-form">
+                <label for="photo">Choose a photo (PNG, JPG, WEBP, GIF &mdash; max 10MB)</label>
+                <input type="file" id="photo" name="photo" accept="image/png,image/jpeg,image/webp,image/gif" required>
+                <button type="submit">Upload Photo</button>
+            </form>
+
+            <div class="owner-links">
+                <a href="{{ url_for('gallery') }}" target="_blank" rel="noopener">View public gallery page &rarr;</a>
+                <span style="margin: 0 10px; color: rgba(255,255,255,.6);">|</span>
+                <a href="{{ url_for('owner_catering_requests') }}">View catering requests &rarr;</a>
+            </div>
+
+            <div class="gallery-grid">
+                {% for image in images %}
+                    <div class="gallery-card owner-gallery-card">
+                        <img src="{{ url_for('uploaded_gallery', filename=image) }}" alt="Food photo: {{ image }}">
+                        <form method="POST" action="{{ url_for('owner_gallery_delete', filename=image) }}" onsubmit="return confirm('Delete this photo?');">
+                            <button type="submit" class="owner-delete-btn">Delete</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <p>No photos uploaded yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+</body>
+</html>

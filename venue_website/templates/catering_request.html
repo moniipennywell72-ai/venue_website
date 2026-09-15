@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catering Request &middot; Sandys Louisiana Soul Food Kitchen</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=118">
+</head>
+<body class="gallery-page">
+    <main class="gallery-page-shell">
+        <header class="gallery-header">
+            <h1>Catering Request</h1>
+            <a href="{{ url_for('home') }}">&larr; Back to Home</a>
+        </header>
+
+        <section class="owner-card owner-card-wide" style="margin: 0 auto;">
+            {% if success %}
+                <p class="owner-error" style="color: #dfffe0 !important;">{{ success }}</p>
+            {% endif %}
+
+            {% if error %}
+                <p class="owner-error">{{ error }}</p>
+            {% endif %}
+
+            <form method="POST" class="owner-form catering-form">
+                <div class="form-row two-col">
+                    <div>
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div>
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                </div>
+
+                <div class="form-row two-col">
+                    <div>
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div>
+                        <label for="event_date">Event date</label>
+                        <input type="date" id="event_date" name="event_date" required>
+                    </div>
+                </div>
+
+                <div class="form-row two-col">
+                    <div>
+                        <label for="guest_count">Guest count</label>
+                        <input type="number" id="guest_count" name="guest_count" min="1" required>
+                    </div>
+                    <div>
+                        <label for="event_type">Event type</label>
+                        <select id="event_type" name="event_type" required>
+                            <option value="">Select one</option>
+                            <option>Birthday</option>
+                            <option>Family Reunion</option>
+                            <option>Church Supper</option>
+                            <option>Corporate Event</option>
+                            <option>Wedding</option>
+                            <option>Holiday Gathering</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="budget">Estimated budget</label>
+                    <input type="text" id="budget" name="budget" placeholder="e.g. $500 - $1,000">
+                </div>
+
+                <div>
+                    <label for="details">Tell us about your event</label>
+                    <textarea id="details" name="details" rows="6" required></textarea>
+                </div>
+
+                <button type="submit">Submit Catering Request</button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>
