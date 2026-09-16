@@ -465,6 +465,7 @@
         <h2 id="music-heading">&#127925; Louisiana Sounds</h2>
         <p>Enjoy the spirit of Louisiana while visiting Sandy's website.</p>
         <audio
+          id="louisiana-music"
           controls
           autoplay
           preload="auto"
@@ -472,6 +473,9 @@
         >
           Your browser does not support the audio player.
         </audio>
+        <button type="button" class="music-play-button" id="music-play-button">
+          Play Louisiana Sounds
+        </button>
       </section>
     </main>
 
@@ -491,6 +495,32 @@
       const menuPopupTrigger = document.getElementById("menu-popup-trigger");
       const menuPopupClose = document.getElementById("menu-popup-close");
       const menuPopupBackdrop = document.getElementById("menu-popup-backdrop");
+      const music = document.getElementById("louisiana-music");
+      const musicPlayButton = document.getElementById("music-play-button");
+
+      function playMusic() {
+        music.play().then(() => {
+          musicPlayButton.textContent = "Pause Louisiana Sounds";
+        }).catch(() => {
+          musicPlayButton.textContent = "Play Louisiana Sounds";
+        });
+      }
+
+      musicPlayButton.addEventListener("click", () => {
+        if (music.paused) {
+          playMusic();
+        } else {
+          music.pause();
+          musicPlayButton.textContent = "Play Louisiana Sounds";
+        }
+      });
+      music.addEventListener("play", () => {
+        musicPlayButton.textContent = "Pause Louisiana Sounds";
+      });
+      music.addEventListener("pause", () => {
+        musicPlayButton.textContent = "Play Louisiana Sounds";
+      });
+      music.addEventListener("canplay", playMusic, { once: true });
 
       function openMenuPopup(event) {
         event.preventDefault();
