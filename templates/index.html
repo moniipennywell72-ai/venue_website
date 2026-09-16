@@ -45,6 +45,10 @@
       </nav>
     </header>
 
+    {% if settings.announcement %}
+    <div class="announcement-banner" role="status">{{ settings.announcement }}</div>
+    {% endif %}
+
     <div class="menu-popup" id="menu-popup" aria-hidden="true">
       <div class="menu-popup-backdrop" id="menu-popup-backdrop"></div>
       <div
@@ -74,8 +78,8 @@
           <span aria-hidden="true">&#9884;</span> Louisiana kitchen
           <span aria-hidden="true">&#9884;</span>
         </p>
-        <h2>Authentic Southern Cooking</h2>
-        <p>Louisiana flavor made with love.</p>
+        <h2>{{ settings.hero_title }}</h2>
+        <p>{{ settings.hero_description }}</p>
         <p>
           Enjoy satisfying soul food, comforting classics, and warm Southern
           hospitality.
@@ -413,9 +417,7 @@
       <section id="catering">
         <h2>Catering</h2>
         <p>
-          Catering is coming soon. For more information and to speak with Sandy
-          about your event, please contact us directly and we will be happy to
-          help with your next gathering.
+          {{ settings.catering_message }}
         </p>
         <div class="catering-grid">
           <div class="catering-card">
@@ -442,7 +444,9 @@
       <section id="contact">
         <h2>Contact Us</h2>
         <p>
-          Business address, telephone number, and opening hours coming soon.
+          {% if settings.address %}{{ settings.address }}{% else %}Business address coming soon.{% endif %}
+          {% if settings.phone %}<br />{{ settings.phone }}{% endif %}
+          {% if settings.hours %}<br />{{ settings.hours }}{% endif %}
         </p>
       </section>
 
@@ -454,12 +458,7 @@
             alt="Sandy's Bayou Blend Louisiana all-purpose seasoning, 4 oz and 8 oz bottles"
           />
         </figure>
-        <p>
-          Sandy's Bayou Blend is her own signature seasoning, years in the
-          making. Hand-mixed with a bold balance of Louisiana spices, it's the
-          secret behind every dish at Sandy's Louisiana Soul Food Kitchen,
-          bringing real bayou flavor to every plate.
-        </p>
+        <p>{{ settings.bayou_blend_description }}</p>
       </section>
 
       <section class="music-section" aria-labelledby="music-heading">

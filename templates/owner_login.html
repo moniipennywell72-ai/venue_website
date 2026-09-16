@@ -13,7 +13,7 @@
     <main class="owner-auth-page">
       <div class="owner-card">
         <h1>Owner Login</h1>
-        <p>Enter the owner password to manage the food gallery.</p>
+        <p>Use the owner email and password to manage the website.</p>
         {% if error %}
         <p class="owner-error">{{ error }}</p>
         {% endif %}
@@ -22,6 +22,14 @@
           action="{{ url_for('owner_login') }}"
           class="owner-form"
         >
+          <label for="email">Owner email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value="{{ owner_email }}"
+            autocomplete="username"
+          />
           <label for="password">Password</label>
           <input
             type="password"
@@ -29,6 +37,7 @@
             name="password"
             required
             autofocus
+            autocomplete="current-password"
           />
           <button type="submit">Log In</button>
         </form>

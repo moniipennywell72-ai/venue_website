@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Site Info &middot; Sandy's Louisiana Soul Food Kitchen</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}?v=118"
+    />
+  </head>
+  <body>
+    <main class="owner-auth-page">
+      <div class="owner-card owner-card-wide">
+        <div class="owner-card-header">
+          <h1>Site Info &mdash; Owner Panel</h1>
+          <a class="owner-back-link" href="{{ url_for('owner_logout') }}"
+            >Log Out</a
+          >
+        </div>
+        <p>
+          Update your contact info, hours, and an optional announcement banner
+          shown at the top of the homepage.
+        </p>
+
+        {% if success %}
+        <p class="owner-success">{{ success }}</p>
+        {% endif %}
+        {% if error %}
+        <p class="owner-error">{{ error }}</p>
+        {% endif %}
+
+        <form
+          method="POST"
+          action="{{ url_for('owner_settings') }}"
+          class="owner-form"
+        >
+          <label for="announcement">Announcement banner (optional)</label>
+          <input
+            type="text"
+            id="announcement"
+            name="announcement"
+            placeholder="e.g. Closed for the holiday, back Monday!"
+            value="{{ settings.announcement }}"
+          />
+
+          <h2>Owner account</h2>
+          <p>Change the email and password used to enter this owner panel.</p>
+          <label for="owner_email">Owner email</label>
+          <input type="email" id="owner_email" name="owner_email" value="{{ owner_email }}" />
+
+          <label for="current_password">Current password</label>
+          <input type="password" id="current_password" name="current_password" autocomplete="current-password" />
+
+          <label for="new_password">New password</label>
+          <input type="password" id="new_password" name="new_password" minlength="8" autocomplete="new-password" />
+
+          <label for="confirm_password">Confirm new password</label>
+          <input type="password" id="confirm_password" name="confirm_password" minlength="8" autocomplete="new-password" />
+
+          <label for="address">Business address</label>
+          <input
+            type="text"
+            id="address"
+            name="address"
+            placeholder="123 Main St, City, LA"
+            value="{{ settings.address }}"
+          />
+
+          <label for="phone">Phone number</label>
+          <input
+            type="text"
+            id="phone"
+            name="phone"
+            placeholder="(555) 555-5555"
+            value="{{ settings.phone }}"
+          />
+
+          <label for="hours">Opening hours</label>
+          <input
+            type="text"
+            id="hours"
+            name="hours"
+            placeholder="Tue-Sat 11am-7pm"
+            value="{{ settings.hours }}"
+          />
+
+          <label for="hero_title">Homepage headline</label>
+          <input type="text" id="hero_title" name="hero_title" value="{{ settings.hero_title }}" />
+
+          <label for="hero_description">Homepage short description</label>
+          <input type="text" id="hero_description" name="hero_description" value="{{ settings.hero_description }}" />
+
+          <label for="catering_message">Catering section message</label>
+          <textarea id="catering_message" name="catering_message" rows="4">{{ settings.catering_message }}</textarea>
+
+          <label for="bayou_blend_description">Bayou Blend description</label>
+          <textarea id="bayou_blend_description" name="bayou_blend_description" rows="4">{{ settings.bayou_blend_description }}</textarea>
+
+          <button type="submit">Save Changes</button>
+        </form>
+
+        <div class="owner-links">
+          <a href="{{ url_for('owner_gallery') }}"
+            >&larr; Back to gallery panel</a
+          >
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

@@ -5,6 +5,7 @@ from datetime import datetime
 from functools import wraps
 
 from flask import Flask, render_template, request, redirect, url_for, session, abort, send_from_directory
+from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
@@ -17,11 +18,29 @@ app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024  # 10 MB per upload
 OWNER_PASSWORD = os.environ.get("OWNER_PASSWORD", "SandyKitchen2026!")
 
 DATA_DIR = os.environ.get("DATA_DIR", app.root_path)
+OWNER_ACCOUNT_FILE = os.environ.get(
+    "OWNER_ACCOUNT_FILE",
+    os.path.join(DATA_DIR, "owner_account.json"),
+)
 GALLERY_FOLDER = os.environ.get("GALLERY_FOLDER", os.path.join(app.static_folder, "gallery"))
 CATERING_REQUESTS_FILE = os.environ.get(
     "CATERING_REQUESTS_FILE",
     os.path.join(app.root_path, "catering_requests.json"),
 )
+SITE_SETTINGS_FILE = os.environ.get(
+    "SITE_SETTINGS_FILE",
+    os.path.join(app.root_path, "site_settings.json"),
+)
+DEFAULT_SITE_SETTINGS = {
+    "announcement": "",
+    "address": "",
+    "phone": "",
+    "hours": "",
+    "hero_title": "Authentic Southern Cooking",
+    "hero_description": "Louisiana flavor made with love.",
+    "catering_message": "Catering is coming soon. For more information and to speak with Sandy about your event, please contact us directly and we will be happy to help with your next gathering.",
+    "bayou_blend_description": "Sandy's Bayou Blend is her own signature seasoning, years in the making. Hand-mixed with a bold balance of Louisiana spices, it's the secret behind every dish at Sandy's Louisiana Soul Food Kitchen, bringing real bayou flavor to every plate.",
+}
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp", "gif"}
 os.makedirs(GALLERY_FOLDER, exist_ok=True)
 if not os.path.exists(CATERING_REQUESTS_FILE):
@@ -54,6 +73,48 @@ def save_catering_requests(requests):
         json.dump(requests, file, ensure_ascii=False, indent=2)
 
 
+def load_site_settings():
+    settings = DEFAULT_SITE_SETTINGS.copy()
+    if os.path.exists(SITE_SETTINGS_FILE):
+        try:
+            with open(SITE_SETTINGS_FILE, "r", encoding="utf-8") as file:
+                saved_settings = json.load(file)
+            if isinstance(saved_settings, dict):
+                settings.update({key: str(saved_settings.get(key, value)) for key, value in settings.items()})
+        except (json.JSONDecodeError, OSError):
+            pass
+    return settings
+
+
+def save_site_settings(settings):
+    with open(SITE_SETTINGS_FILE, "w", encoding="utf-8") as file:
+        json.dump(settings, file, ensure_ascii=False, indent=2)
+
+
+def load_owner_account():
+    if os.path.exists(OWNER_ACCOUNT_FILE):
+        try:
+            with open(OWNER_ACCOUNT_FILE, "r", encoding="utf-8") as file:
+                account = json.load(file)
+            if isinstance(account, dict) and account.get("password_hash"):
+                return {
+                    "email": str(account.get("email", "")).strip().lower(),
+                    "password_hash": account["password_hash"],
+                }
+        except (json.JSONDecodeError, OSError):
+            pass
+    return {
+        "email": os.environ.get("OWNER_EMAIL", "").strip().lower(),
+        "password_hash": generate_password_hash(OWNER_PASSWORD),
+    }
+
+
+def save_owner_account(account):
+    os.makedirs(os.path.dirname(OWNER_ACCOUNT_FILE) or ".", exist_ok=True)
+    with open(OWNER_ACCOUNT_FILE, "w", encoding="utf-8") as file:
+        json.dump(account, file, ensure_ascii=False, indent=2)
+
+
 def owner_required(view):
     @wraps(view)
     def wrapped(*args, **kwargs):
@@ -65,7 +126,7 @@ def owner_required(view):
 
 @app.route('/')
 def home():
-    return render_template('home/index.html')
+    return render_template('home/index.html', settings=load_site_settings())
 
 
 @app.route("/gallery")
@@ -119,13 +180,53 @@ def catering_request():
 def owner_login():
     error = None
     if request.method == "POST":
+        email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
-        if secrets.compare_digest(password, OWNER_PASSWORD):
+        account = load_owner_account()
+        email_matches = not account["email"] or secrets.compare_digest(email, account["email"])
+        if email_matches and check_password_hash(account["password_hash"], password):
             session.clear()
             session["is_owner"] = True
             return redirect(url_for("owner_gallery"))
-        error = "Incorrect password."
-    return render_template("owner_login.html", error=error)
+        error = "Incorrect email or password."
+    return render_template("owner_login.html", error=error, owner_email=load_owner_account()["email"])
+
+
+@app.route("/owner/settings", methods=["GET", "POST"])
+@owner_required
+def owner_settings():
+    settings = load_site_settings()
+    account = load_owner_account()
+    success = None
+    error = None
+    if request.method == "POST":
+        for key in settings:
+            settings[key] = request.form.get(key, "").strip()
+        new_email = request.form.get("owner_email", "").strip().lower()
+        current_password = request.form.get("current_password", "")
+        new_password = request.form.get("new_password", "")
+        confirm_password = request.form.get("confirm_password", "")
+        changing_account = new_email != account["email"] or new_password
+        if changing_account and not check_password_hash(account["password_hash"], current_password):
+            error = "Enter the current password to change the owner email or password."
+        elif new_password and new_password != confirm_password:
+            error = "The new passwords do not match."
+        elif new_password and len(new_password) < 8:
+            error = "The new password must be at least 8 characters."
+        else:
+            account["email"] = new_email
+            if new_password:
+                account["password_hash"] = generate_password_hash(new_password)
+            save_site_settings(settings)
+            save_owner_account(account)
+            success = "Site settings and owner account saved successfully."
+    return render_template(
+        "owner_settings.html",
+        settings=settings,
+        owner_email=account["email"],
+        success=success,
+        error=error,
+    )
 
 
 @app.route("/owner/logout")
