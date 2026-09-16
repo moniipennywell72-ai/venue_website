@@ -6,8 +6,8 @@
     --plum-dark: #241526;
     --cream: #fbf6ee;
     --muted: #756a72;
-    --gold: #d49a35;
-    --gold-light: #f1d18c;
+    --gold: #e2ad45;
+    --gold-light: #ffe8a8;
     /* enhanced line color */
     --line: #eadfd2;
     --white: #ffffff;
@@ -679,6 +679,32 @@ section:not(.hero)>h2 {
     filter: drop-shadow(0 2px 3px rgba(53, 29, 53, .45));
 }
 
+.contact-details {
+    max-width: 650px;
+    margin: 0 auto;
+    list-style: none;
+    padding: 0;
+    text-align: center;
+}
+
+.contact-details li {
+    color: var(--gold-light);
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(1.05rem, 2.1vw, 1.4rem);
+    font-weight: 700;
+    letter-spacing: .02em;
+    margin: 6px 0;
+}
+
+.site-announcement {
+    background: linear-gradient(100deg, #b5822a 0%, #d4af37 50%, #b5822a 100%);
+    color: #2a1220;
+    font-weight: 800;
+    text-align: center;
+    padding: 10px 16px;
+    letter-spacing: .02em;
+}
+
 #bayou-blend p {
     max-width: 650px;
     margin: 0 auto;
@@ -1014,6 +1040,11 @@ footer p {
 
 .owner-error {
     color: #ffd5d5 !important;
+    font-weight: 700;
+}
+
+.owner-success {
+    color: #d5ffd9 !important;
     font-weight: 700;
 }
 
